@@ -1,4 +1,6 @@
 """play some games, maybe even learn from them"""
+import logging
+
 import gym
 
 
@@ -7,9 +9,14 @@ import players
 
 def play_loop(env):
     """play for a while"""
-    for episode in range(1000):
-        env.render()
-        env.step(env.action_space.sample())
+    logging.info('getting player')
+    with players.nn_player('/tmp/rl', 'mlp', env) as player:
+        obs = env.reset()
+        for episode in range(1000):
+            env.render()
+            action = player(obs)
+            print(action, obs)
+            obs, reward, done, info = env.step(action)
 
 
 def main():

@@ -3,8 +3,8 @@ import random
 
 
 def epsilon_wrapper(player, epsilon, env):
-    """Gets a wrapper around a player which may just choose a random action
-    instead.
+    """Gets a wrapper around a player callable which may just choose a random
+    action instead.
 
     Args:
         player (callable): the player we want to actually use.
