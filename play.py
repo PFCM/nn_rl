@@ -18,11 +18,14 @@ def record_transition(current_state, action, reward, next_state, terminal):
         next_state: the subsequent state the world transitioned to.
         terminal: if the state turned out to be terminal.
     """
-    logging.info('transition:')
-    logging.info('  current_state: %s', current_state)
-    logging.info('         action: %s', action)
-    logging.info('         reward: %s', reward)
-    logging.info('     next_state: %s', next_state)
+    logging.debug('transition:')
+    logging.debug('  current_state: %s', current_state)
+    logging.debug('         action: %s', action)
+    logging.debug('         reward: %s', reward)
+    logging.debug('     next_state: %s', next_state)
+
+    players.replay_buffer.store(current_state, action, reward, next_state,
+                                terminal)
 
 
 def play_loop(env):
@@ -36,9 +39,11 @@ def play_loop(env):
             next_state, reward, done, info = env.step(action)
             # maybe record the transition
             record_transition(current_state, action, reward, next_state, done)
+            current_state = next_state
 
 
 def main():
+    logging.basicConfig(level=logging.DEBUG)
     env = gym.make('Pong-ram-v0')
     env.reset()
 
