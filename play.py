@@ -1,6 +1,7 @@
 """play some games, maybe even learn from them"""
 import logging
 
+import tensorflow as tf
 import gym
 
 
@@ -10,11 +11,13 @@ import players
 def play_loop(env):
     """play for a while"""
     logging.info('getting player')
-    with players.nn_player('/tmp/rl', 'mlp', env) as player:
+    player = players.nn_player('mlp', env)
+    sv = tf.train.Supervisor(logdir='/tmp/rl')
+    with sv.managed_session() as session:
         current_state = env.reset()
         for episode in range(1000):
             env.render()
-            action = player.act(current_state)
+            action = player.act(current_state, session)
             next_state, reward, done, info = env.step(action)
             player.reward(reward)
 

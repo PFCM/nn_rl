@@ -10,7 +10,9 @@ class ReplayBuffer(object):
 
     def __init__(self, logdir, actions_per_file=1000, max_files=100):
         """Sets up a buffer using a given directory"""
-        pass
+        self.logdir = logdir
+        self.actions_per_file = actions_per_file
+        self.max_files = max_files
 
     def store(self, current_state, action, reward, previous_state):
         """Stores an action in the buffer. When the buffer is big enough, they
