@@ -33,7 +33,7 @@ def play_loop(env):
 def main():
     logging.basicConfig(level=logging.INFO)
     gym.logger.setLevel(logging.INFO)
-    env = gym.make('Pong-ram-v0')
+    env = gym.make('Pong-v0')
     env.reset()
 
     play_loop(env)

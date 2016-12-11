@@ -23,7 +23,8 @@ def get_input_for(env, batch_size, random_projection=False):
         with tf.variable_scope('input_projection'):
             proj = tf.get_variable(
                 'projection', shape=[shape[1], random_projection],
-                initializer=tf.random_normal_initializer())
+                initializer=tf.random_normal_initializer(stddev=0.1),
+                trainable=False)
             input_pl = tf.matmul(input_pl, proj)
     return input_pl
 
@@ -36,9 +37,21 @@ def sample_action(logits):
         logits: the linear outputs of the network.
 
     Returns:
-        tensor: an int tensor containing samples actions.
+        tensor: an int tensor containing sampled actions.
     """
     return tf.multinomial(logits, 1)
+
+
+def greedy_action(logits):
+    """Add ops to just return the greedy choice of action (argmax).
+
+    Args:
+        logits: linear outputs of the network.
+
+    Returns:
+        tensor: an int tensor with chosen actions.
+    """
+    return tf.arg_max(logits, 1)
 
 
 def get_net(model, inputs, env):
@@ -90,6 +103,12 @@ def fully_connected_net(inputs, width, depth, num_outputs, nonlin=tf.nn.relu,
             'is_training': True if batch_norm == BATCH_NORM_TRAIN else False}
     else:
         normalizer_fn, normalizer_params = None, None
+
+    # flatten inputs if required
+    if len(inputs.get_shape()) > 2:
+        batch_size = inputs.get_shape()[0].value
+        inputs = tf.reshape(inputs, [batch_size, -1])
+
     with tf.variable_scope('fcn'):
         with slim.arg_scope([slim.fully_connected],
                             normalizer_fn=normalizer_fn,

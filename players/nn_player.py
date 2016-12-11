@@ -37,10 +37,11 @@ class NNPlayer(object):
 
     def act(self, obs, session):
         """act on an observation"""
+        obs = obs.reshape(self.input_var.get_shape().as_list())
         self._last_action = session.run(
-            self.action_var, {self.input_var: obs.reshape((1, -1))})
+            self.action_var, {self.input_var: obs})
         self._last_state = self._current_state
-        self._current_state = obs.reshape((1, -1))
+        self._current_state = obs
         return self._last_action
 
     def reward(self, reward):
